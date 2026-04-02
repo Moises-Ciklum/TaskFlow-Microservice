@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Project Path="TaskFlow.API/TaskFlow.API.csproj" />
+  <Project Path="TaskFlow.Application/TaskFlow.Application.csproj" />
+  <Project Path="TaskFlow.Core/TaskFlow.Core.csproj" />
+  <Project Path="TaskFlow.Infrastructure/TaskFlow.Infrastructure.csproj" />
+</Solution>
