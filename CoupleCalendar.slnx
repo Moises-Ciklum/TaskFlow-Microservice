@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="docker-compose.yml" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="CoupleCalendar.API/CoupleCalendar.API.csproj" />
+  <Project Path="CoupleCalendar.Application/CoupleCalendar.Application.csproj" />
+  <Project Path="CoupleCalendar.Core/CoupleCalendar.Core.csproj" />
+  <Project Path="CoupleCalendar.Infrastructure/CoupleCalendar.Infrastructure.csproj" />
+</Solution>
