@@ -6,5 +6,7 @@ namespace CoupleCalendar.Core.Interfaces
     {
         Task<IEnumerable<CalendarEvent>> GetAllAsync(string? owner = null);
         Task<CalendarEvent> AddAsync(CalendarEvent calendarEvent);
+        Task<bool> DeleteAsync(Guid id);
+        Task<CalendarEvent?> UpdateAsync(Guid id, CalendarEvent calendarEvent);
     }
 }

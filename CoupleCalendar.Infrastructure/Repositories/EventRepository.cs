@@ -33,4 +33,33 @@ public class EventRepository : IEventRepository
         await _context.SaveChangesAsync();
         return calendarEvent;
     }
+
+    public async Task<bool> DeleteAsync(Guid id)
+    {
+        var eventToDelete = await _context.Events.FindAsync(id);
+        if (eventToDelete == null)
+        {
+            return false;
+        }
+        _context.Events.Remove(eventToDelete);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<CalendarEvent?> UpdateAsync(Guid id, CalendarEvent calendarEvent)
+    {
+        var existingEvent = await _context.Events.FindAsync(id);
+        if (existingEvent == null)
+        {
+            return null;
+        }
+        existingEvent.Title = calendarEvent.Title;
+        existingEvent.StartDate = calendarEvent.StartDate;
+        existingEvent.EndDate = calendarEvent.EndDate;
+        existingEvent.Owner = calendarEvent.Owner;
+        existingEvent.Type = calendarEvent.Type;
+
+        await _context.SaveChangesAsync();
+        return existingEvent;
+    }
 }
