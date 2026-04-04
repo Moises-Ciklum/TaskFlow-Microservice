@@ -44,6 +44,8 @@ public class EventsController : ControllerBase
             return NotFound();
         }
 
+        await _hubContext.Clients.All.SendAsync("ReceiveDeletedEvent", id);
+
         return NoContent();
     }
 
@@ -56,6 +58,8 @@ public class EventsController : ControllerBase
         {
             return NotFound();
         }
+
+        await _hubContext.Clients.All.SendAsync("ReceiveUpdatedEvent", response);
 
         return Ok(response);
     }

@@ -35,29 +35,61 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 
     <script>
-        // 2. We build the connection to our Hub URL
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/calendarHub")
             .build();
 
-        // 3. We tell the client what to do when it hears the "ReceiveNewEvent" message
+        // 1. CREATE EVENT
         connection.on("ReceiveNewEvent", function (newEvent) {
-            console.log("New event received from server!", newEvent);
+            console.log("New event received!", newEvent);
 
-            // Create a visual card for the event
             const card = document.createElement("div");
             card.className = "event-card";
-            card.innerHTML = `
-                <strong>${newEvent.title}</strong> (${newEvent.type})<br/>
-                Owner: ${newEvent.owner} <br/>
-                <span class="timestamp">Start: ${new Date(newEvent.startDate).toLocaleString()} | End: ${new Date(newEvent.endDate).toLocaleString()}</span>
-            `;
+            // CRITICAL: We assign the database Guid as the HTML element ID
+            card.id = `event-${newEvent.id}`;
 
-            // Add the new card to the top of our container
+            card.innerHTML = getCardHtml(newEvent);
             document.getElementById("eventsContainer").prepend(card);
         });
 
-        // 4. Start the connection!
+        // 2. UPDATE EVENT
+        connection.on("ReceiveUpdatedEvent", function (updatedEvent) {
+            console.log("Event updated!", updatedEvent);
+
+            // Find the existing card on the screen
+            const card = document.getElementById(`event-${updatedEvent.id}`);
+
+            if (card) {
+                // Update its content
+                card.innerHTML = getCardHtml(updatedEvent);
+
+                // Optional UI trick: Make it blink yellow for a second so the user notices the change
+                const originalBorder = card.style.borderLeftColor;
+                card.style.borderLeftColor = "#FFC107";
+                setTimeout(() => card.style.borderLeftColor = originalBorder, 1000);
+            }
+        });
+
+        // 3. DELETE EVENT
+        connection.on("ReceiveDeletedEvent", function (eventId) {
+            console.log("Event deleted!", eventId);
+
+            // Find the existing card and destroy it
+            const card = document.getElementById(`event-${eventId}`);
+            if (card) {
+                card.remove();
+            }
+        });
+
+        // Helper function to avoid writing the HTML structure twice
+        function getCardHtml(event) {
+            return `
+                    <strong>${event.title}</strong> (${event.type})<br/>
+                    Owner: ${event.owner} <br/>
+                    <span class="timestamp">Start: ${new Date(event.startDate).toLocaleString()} | End: ${new Date(event.endDate).toLocaleString()}</span>
+                `;
+        }
+
         connection.start()
             .then(() => console.log("✅ Connected to SignalR Hub successfully!"))
             .catch(err => console.error("❌ Error connecting to Hub:", err));
