@@ -72,7 +72,7 @@ public class EventService : IEventService
         };
 
         bool hasOverlap = existingEvents.Any(e =>
-            e.Id == id &&
+            e.Id != id &&
             eventToUpdate.StartDate < e.EndDate &&
             eventToUpdate.EndDate > e.StartDate);
 

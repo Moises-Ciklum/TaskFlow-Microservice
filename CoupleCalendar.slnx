@@ -7,4 +7,5 @@
   <Project Path="CoupleCalendar.Application/CoupleCalendar.Application.csproj" />
   <Project Path="CoupleCalendar.Core/CoupleCalendar.Core.csproj" />
   <Project Path="CoupleCalendar.Infrastructure/CoupleCalendar.Infrastructure.csproj" />
+  <Project Path="CoupleCalendar.UnitTests/CoupleCalendar.UnitTests.csproj" Id="cd273321-84f2-4389-b246-4751a5220a16" />
 </Solution>
