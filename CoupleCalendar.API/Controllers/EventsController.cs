@@ -1,11 +1,14 @@
 ﻿using CoupleCalendar.API.Hubs;
 using CoupleCalendar.Application.DTOs;
 using CoupleCalendar.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 namespace CoupleCalendar.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class EventsController : ControllerBase
@@ -22,6 +25,9 @@ public class EventsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateEvent([FromBody] CreateEventDto requestDto)
     {
+        var currentUserName = User.FindFirstValue(ClaimTypes.Name);
+        requestDto.Owner = currentUserName ?? throw new UnauthorizedAccessException();
+
         var newEvent = await _eventService.CreateEventAsync(requestDto);
         await _hubContext.Clients.All.SendAsync("ReceiveNewEvent", newEvent);
         return Ok(newEvent);
@@ -30,7 +36,10 @@ public class EventsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllEvents([FromQuery] string? owner)
     {
-        var response = await _eventService.GetAllEventsAsync(owner);
+        var currentUsername = User.FindFirstValue(ClaimTypes.Name);
+
+        if (currentUsername == null) return Unauthorized();
+        var response = await _eventService.GetAllEventsAsync(currentUsername);
         return Ok(response);
     }
 
@@ -52,6 +61,9 @@ public class EventsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateEvent(Guid id, [FromBody] UpdateEventDto requestDto)
     {
+        var currentUserName = User.FindFirstValue(ClaimTypes.Name);
+        requestDto.Owner = currentUserName ?? throw new UnauthorizedAccessException();
+
         var response = await _eventService.UpdateEventAsync(id, requestDto);
 
         if (response == null)
